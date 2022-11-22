@@ -12,7 +12,12 @@ class TransactionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       elevation: 20,
+      margin: EdgeInsets.symmetric(
+        horizontal: 10,
+        vertical: 2,
+      ),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Container(
             margin: EdgeInsets.symmetric(
@@ -26,7 +31,7 @@ class TransactionCard extends StatelessWidget {
             )),
             padding: EdgeInsets.all(10),
             child: Text(
-              '\$${t.amt}',
+              '\$${t.amt.toStringAsFixed(2)}',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 20,

@@ -28,7 +28,16 @@ class _TransactionListState extends State<TransactionList> {
   ];
 
   void _addTransaction(String txTitle, String amount) {
+    if (amount.isEmpty) {
+      return;
+    }
+
     double txAmt = double.parse(amount);
+
+    if (txTitle.isEmpty) {
+      return;
+    }
+
     Transaction tx = Transaction(
         title: txTitle,
         amt: txAmt,

@@ -9,6 +9,10 @@ class NewTransaction extends StatelessWidget {
   final titleController = TextEditingController();
   final amountController = TextEditingController();
 
+  void submitData() {
+    addTransactionCallback(titleController.text, amountController.text);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -25,7 +29,7 @@ class NewTransaction extends StatelessWidget {
               controller: titleController,
               maxLength: 20,
               maxLengthEnforcement: MaxLengthEnforcement.enforced,
-              // onChanged: (inp) => amountInput = inp,
+              onSubmitted: (value) => submitData(),
             ),
             TextField(
               cursorWidth: 10,
@@ -33,14 +37,13 @@ class NewTransaction extends StatelessWidget {
               controller: amountController,
               maxLength: 20,
               maxLengthEnforcement: MaxLengthEnforcement.enforced,
-              // onChanged: (inp) => amountInput = inp,
+              keyboardType: TextInputType.number,
+              onSubmitted: (value) => submitData(),
             ),
             TextButton(
               onPressed: () {
                 addTransactionCallback(
                     titleController.text, amountController.text);
-                print("amount ${amountController.text}");
-                print("title ${titleController.text}");
               },
               child: Text(
                 'Add Transaction',
