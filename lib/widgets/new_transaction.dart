@@ -1,16 +1,26 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-class NewTransaction extends StatelessWidget {
+class NewTransaction extends StatefulWidget {
   final Function addTransactionCallback;
 
   NewTransaction(this.addTransactionCallback);
 
+  @override
+  State<NewTransaction> createState() => _NewTransactionState();
+}
+
+class _NewTransactionState extends State<NewTransaction> {
   final titleController = TextEditingController();
   final amountController = TextEditingController();
 
   void submitData() {
-    addTransactionCallback(titleController.text, amountController.text);
+    final enteredTitle = titleController.text;
+    final enteredAmount = amountController.text;
+
+    widget.addTransactionCallback(enteredTitle, enteredAmount);
+
+    Navigator.of(context).pop();
   }
 
   @override
@@ -41,10 +51,7 @@ class NewTransaction extends StatelessWidget {
               onSubmitted: (value) => submitData(),
             ),
             TextButton(
-              onPressed: () {
-                addTransactionCallback(
-                    titleController.text, amountController.text);
-              },
+              onPressed: () => submitData(),
               child: Text(
                 'Add Transaction',
               ),
