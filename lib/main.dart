@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_complete_guide/widgets/new_transaction.dart';
-import 'package:flutter_complete_guide/widgets/transactionList.dart';
 
 import 'models/transaction.dart';
+import 'widgets/chart.dart';
+import 'widgets/new_transaction.dart';
+import 'widgets/transactionList.dart';
 
 void main() => runApp(MyApp());
 
@@ -10,7 +11,24 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter App',
+      title: 'Personal Expenses',
+      theme: ThemeData(
+        primarySwatch: Colors.red,
+        accentColor: Colors.amber,
+        fontFamily: 'Quicksand',
+        textTheme: ThemeData.light().textTheme.copyWith(
+              headline6: TextStyle(),
+            ),
+        appBarTheme: AppBarTheme(
+          foregroundColor: Colors.white,
+          titleTextStyle: TextStyle(
+            fontFamily: 'OpenSans',
+            fontSize: 26,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+      ),
       home: MyHomePage(),
     );
   }
@@ -27,15 +45,21 @@ class _MyHomePageState extends State<MyHomePage> {
       id: 't1',
       title: "New Shoes",
       amt: 169.99,
-      date: DateTime(2022, 2, 2),
+      date: DateTime(2022, 11, 26),
     ),
     Transaction(
       id: 't2',
       title: "Groceries",
       amt: 16.53,
-      date: DateTime.now(),
+      date: DateTime(2022, 11, 24),
     ),
   ];
+
+  List<Transaction> get _recentTransactions {
+    return _userTransactions.where((tx) {
+      return tx.date.isAfter(DateTime.now().subtract(Duration(days: 7)));
+    }).toList();
+  }
 
   void _addTransaction(String txTitle, String amount) {
     if (amount.isEmpty) {
@@ -91,8 +115,8 @@ class _MyHomePageState extends State<MyHomePage> {
             Container(
               width: double.infinity,
               child: Card(
-                color: Colors.blue,
-                child: Text('Chart'),
+                color: Theme.of(context).backgroundColor,
+                child: Chart(_recentTransactions),
                 elevation: 5,
               ),
             ),
