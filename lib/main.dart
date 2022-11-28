@@ -13,12 +13,18 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Personal Expenses',
       theme: ThemeData(
-        primarySwatch: Colors.red,
-        accentColor: Colors.amber,
+        primarySwatch: Colors.deepPurple,
+        // accentColor: Colors.purple[900],
         fontFamily: 'Quicksand',
         textTheme: ThemeData.light().textTheme.copyWith(
-              headline6: TextStyle(),
+            headline6: TextStyle(
+              fontFamily: 'OpenSans',
+              fontSize: 30,
+              fontWeight: FontWeight.bold,
             ),
+            button: TextStyle(
+              color: Colors.white,
+            )),
         appBarTheme: AppBarTheme(
           foregroundColor: Colors.white,
           titleTextStyle: TextStyle(
@@ -44,14 +50,14 @@ class _MyHomePageState extends State<MyHomePage> {
     Transaction(
       id: 't1',
       title: "New Shoes",
-      amt: 169.99,
+      amt: 69.99,
       date: DateTime(2022, 11, 26),
     ),
     Transaction(
       id: 't2',
       title: "Groceries",
-      amt: 16.53,
-      date: DateTime(2022, 11, 24),
+      amt: 16.98,
+      date: DateTime(2022, 11, 21),
     ),
   ];
 
@@ -61,7 +67,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }).toList();
   }
 
-  void _addTransaction(String txTitle, String amount) {
+  void _addTransaction(String txTitle, String amount, DateTime date) {
     if (amount.isEmpty) {
       return;
     }
@@ -72,11 +78,16 @@ class _MyHomePageState extends State<MyHomePage> {
       return;
     }
 
+    if (date == null) {
+      return;
+    }
+
     Transaction tx = Transaction(
-        title: txTitle,
-        amt: txAmt,
-        date: DateTime.now(),
-        id: DateTime.now().toString());
+      title: txTitle,
+      amt: txAmt,
+      date: date,
+      id: DateTime.now().toString(),
+    );
 
     setState(() {
       _userTransactions.add(tx);
@@ -94,6 +105,12 @@ class _MyHomePageState extends State<MyHomePage> {
         );
       },
     );
+  }
+
+  void _deleteTransaction(String id) {
+    setState(() {
+      _userTransactions.removeWhere((tx) => tx.id == id);
+    });
   }
 
   @override
@@ -120,7 +137,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 elevation: 5,
               ),
             ),
-            TransactionList(_userTransactions),
+            TransactionList(_userTransactions, _deleteTransaction),
           ],
         ),
       ),

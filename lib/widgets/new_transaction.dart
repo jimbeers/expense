@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
 
 class NewTransaction extends StatefulWidget {
   final Function addTransactionCallback;
@@ -11,16 +12,32 @@ class NewTransaction extends StatefulWidget {
 }
 
 class _NewTransactionState extends State<NewTransaction> {
-  final titleController = TextEditingController();
-  final amountController = TextEditingController();
+  final _titleController = TextEditingController();
+  final _amountController = TextEditingController();
+  DateTime _selectedDate;
 
-  void submitData() {
-    final enteredTitle = titleController.text;
-    final enteredAmount = amountController.text;
+  void _submitData() {
+    final enteredTitle = _titleController.text;
+    final enteredAmount = _amountController.text;
+    final enteredDate = _selectedDate;
 
-    widget.addTransactionCallback(enteredTitle, enteredAmount);
+    widget.addTransactionCallback(enteredTitle, enteredAmount, enteredDate);
 
     Navigator.of(context).pop();
+  }
+
+  void _presentDatePicker() {
+    showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2019),
+      lastDate: DateTime.now(),
+    ).then((pickedDate) {
+      if (pickedDate == null) return;
+      setState(() {
+        _selectedDate = pickedDate;
+      });
+    });
   }
 
   @override
@@ -36,26 +53,61 @@ class _NewTransactionState extends State<NewTransaction> {
               autocorrect: true,
               cursorWidth: 10,
               decoration: (InputDecoration(labelText: 'Title')),
-              controller: titleController,
+              controller: _titleController,
               maxLength: 20,
               maxLengthEnforcement: MaxLengthEnforcement.enforced,
-              onSubmitted: (value) => submitData(),
+              onSubmitted: (value) => _submitData(),
             ),
             TextField(
               cursorWidth: 10,
               decoration: (InputDecoration(labelText: 'Amount')),
-              controller: amountController,
+              controller: _amountController,
               maxLength: 20,
               maxLengthEnforcement: MaxLengthEnforcement.enforced,
               keyboardType: TextInputType.number,
-              onSubmitted: (value) => submitData(),
+              onSubmitted: (value) => _submitData(),
             ),
-            TextButton(
-              onPressed: () => submitData(),
+            Container(
+              height: 70,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      _selectedDate == null
+                          ? 'No Date Chosen!'
+                          : 'Date: ${DateFormat.yMd().format(_selectedDate)}',
+                    ),
+                  ),
+                  TextButton(
+                    style: TextButton.styleFrom(
+                      foregroundColor: Theme.of(context).primaryColor,
+                    ),
+                    onPressed: _presentDatePicker,
+                    child: Text(
+                      'Choose Date',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () => _submitData(),
               child: Text(
                 'Add Transaction',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-              style: TextButton.styleFrom(foregroundColor: Colors.purple),
+              style: TextButton.styleFrom(
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(9)),
+                ),
+              ),
             )
           ],
         ),
