@@ -1,11 +1,21 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'models/transaction.dart';
 import 'widgets/chart.dart';
 import 'widgets/new_transaction.dart';
 import 'widgets/transactionList.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  // WidgetsFlutterBinding.ensureInitialized();
+  // SystemChrome.setPreferredOrientations([
+  //   DeviceOrientation.portraitUp,
+  //   DeviceOrientation.portraitDown,
+  // ]);
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   @override
@@ -59,8 +69,45 @@ class _MyHomePageState extends State<MyHomePage> {
       amt: 16.98,
       date: DateTime(2022, 11, 21),
     ),
+    Transaction(
+      id: 't3',
+      title: "New Shoes",
+      amt: 69.99,
+      date: DateTime(2022, 11, 26),
+    ),
+    Transaction(
+      id: 't4',
+      title: "Groceries",
+      amt: 16.98,
+      date: DateTime(2022, 11, 21),
+    ),
+    Transaction(
+      id: 't5',
+      title: "New Shoes",
+      amt: 69.99,
+      date: DateTime(2022, 11, 26),
+    ),
+    Transaction(
+      id: 't6',
+      title: "Groceries",
+      amt: 16.98,
+      date: DateTime(2022, 11, 21),
+    ),
+    Transaction(
+      id: 't7',
+      title: "New Shoes",
+      amt: 69.99,
+      date: DateTime(2022, 11, 26),
+    ),
+    Transaction(
+      id: 't8',
+      title: "Groceries",
+      amt: 16.98,
+      date: DateTime(2022, 11, 21),
+    ),
   ];
 
+  bool _showChart = false;
   List<Transaction> get _recentTransactions {
     return _userTransactions.where((tx) {
       return tx.date.isAfter(DateTime.now().subtract(Duration(days: 7)));
@@ -115,36 +162,83 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    var mediaQuery = MediaQuery.of(context);
+    final isLandscape = mediaQuery.orientation == Orientation.landscape;
+    PreferredSizeWidget myAppBar = AppBar(
+      title: Text('Flutter App'),
+      actions: [
+        IconButton(
+          icon: Icon(Icons.add),
+          onPressed: () => _startAddNewTransaction(context),
+        )
+      ],
+    );
+    var txListWidget = Container(
+      height: (mediaQuery.size.height -
+              myAppBar.preferredSize.height -
+              mediaQuery.padding.top) *
+          0.7,
+      child: TransactionList(_userTransactions, _deleteTransaction),
+    );
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Flutter App'),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.add),
-            onPressed: () => _startAddNewTransaction(context),
-          )
-        ],
-      ),
+      appBar: myAppBar,
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Container(
-              width: double.infinity,
-              child: Card(
-                color: Theme.of(context).backgroundColor,
-                child: Chart(_recentTransactions),
-                elevation: 5,
+            if (isLandscape)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text("Show Chart"),
+                  Switch(
+                    value: _showChart,
+                    onChanged: (val) {
+                      setState(() {
+                        _showChart = val;
+                      });
+                    },
+                  ),
+                ],
               ),
-            ),
-            TransactionList(_userTransactions, _deleteTransaction),
+            if (!isLandscape)
+              Container(
+                width: double.infinity,
+                height: (mediaQuery.size.height -
+                        myAppBar.preferredSize.height -
+                        mediaQuery.padding.top) *
+                    0.3,
+                child: Card(
+                  color: Theme.of(context).backgroundColor,
+                  child: Chart(_recentTransactions),
+                  elevation: 5,
+                ),
+              ),
+            if (!isLandscape) txListWidget,
+            if (isLandscape)
+              _showChart
+                  ? Container(
+                      width: double.infinity,
+                      height: (mediaQuery.size.height -
+                              myAppBar.preferredSize.height -
+                              mediaQuery.padding.top) *
+                          0.7,
+                      child: Card(
+                        color: Theme.of(context).backgroundColor,
+                        child: Chart(_recentTransactions),
+                        elevation: 5,
+                      ),
+                    )
+                  : txListWidget,
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
-        onPressed: () => _startAddNewTransaction(context),
-      ),
+      floatingActionButton: Platform.isIOS
+          ? Container()
+          : FloatingActionButton(
+              child: Icon(Icons.add),
+              onPressed: () => _startAddNewTransaction(context),
+            ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
