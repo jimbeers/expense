@@ -49,6 +49,7 @@ class TransTile extends StatelessWidget {
           },
           icon: Icon(Icons.delete),
           color: Theme.of(context).errorColor,
+          tooltip: "This is text example",
         ),
       ),
     );

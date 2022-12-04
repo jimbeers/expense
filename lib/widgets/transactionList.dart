@@ -12,32 +12,45 @@ class TransactionList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(children: [
-      Container(
-        height: 600,
-        child: transactions.isEmpty
-            ? Column(children: [
-                Text(
-                  "No transactions yet",
-                  style: Theme.of(context).textTheme.headline6,
-                ),
-                SizedBox(
-                  height: 30,
-                ),
-                Container(
-                    height: 300,
-                    child: Image.asset(
-                      'assets/images/waiting.png',
-                      fit: BoxFit.cover,
-                    )),
-              ])
-            : ListView.builder(
-                itemBuilder: ((ctx, index) {
-                  return TransTile(transactions[index], deleteTransaction);
-                }),
-                itemCount: transactions.length,
-              ),
+    var column = Column(children: [
+      Text(
+        "No transactions yet",
+        style: Theme.of(context).textTheme.headline6,
       ),
+      SizedBox(
+        height: 30,
+      ),
+      Container(
+          height: 300,
+          child: Image.asset(
+            'assets/images/waiting.png',
+            fit: BoxFit.cover,
+          )),
     ]);
+
+    return transactions.isEmpty
+        ? LayoutBuilder(builder: (ctx, constraints) {
+            return Column(children: [
+              Text(
+                "No transactions yet",
+                style: Theme.of(context).textTheme.headline6,
+              ),
+              SizedBox(
+                height: 30,
+              ),
+              Container(
+                  height: constraints.maxHeight * 0.6,
+                  child: Image.asset(
+                    'assets/images/waiting.png',
+                    fit: BoxFit.cover,
+                  )),
+            ]);
+          })
+        : ListView.builder(
+            itemBuilder: ((ctx, index) {
+              return TransTile(transactions[index], deleteTransaction);
+            }),
+            itemCount: transactions.length,
+          );
   }
 }
